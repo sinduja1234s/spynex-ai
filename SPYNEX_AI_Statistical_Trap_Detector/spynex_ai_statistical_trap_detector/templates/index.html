@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPYNEX AI — Statistical Trap & Anomaly Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/static/css/dashboard.css" />
+  <link rel="stylesheet" href="/static/css/sidebar.css" />
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="brand-header">
+          <img src="/static/img/spynex_icon.png" alt="SPYNEX AI" class="brand-logo" />
+          <div class="brand-text">
+            <span class="brand-title">SPYNEX AI</span>
+            <span class="brand-tagline">See Beyond. Think Beyond.</span>
+          </div>
+        </div>
+
+        <nav class="nav-menu">
+          <button class="nav-item active" data-view="overview">
+            <span class="nav-icon">⌂</span>
+            <span class="nav-label">Overview</span>
+          </button>
+
+          <div class="nav-section">ANALYTICS</div>
+          <button class="nav-item" data-view="analytics">
+            <span class="nav-icon">◫</span>
+            <span class="nav-label">Analytics Dashboard</span>
+          </button>
+          <button class="nav-item" data-view="statistical">
+            <span class="nav-icon">∿</span>
+            <span class="nav-label">Statistical Analysis</span>
+          </button>
+          <button class="nav-item" data-view="reports">
+            <span class="nav-icon">▤</span>
+            <span class="nav-label">Reports</span>
+          </button>
+
+          <div class="nav-section">AI &amp; INSIGHTS</div>
+          <button class="nav-item" data-view="traps">
+            <span class="nav-icon">◈</span>
+            <span class="nav-label">Trap Detection</span>
+          </button>
+          <button class="nav-item" data-view="anomalies">
+            <span class="nav-icon">⟁</span>
+            <span class="nav-label">Anomaly Detection</span>
+          </button>
+          <button class="nav-item" data-view="assistant">
+            <span class="nav-icon">✦</span>
+            <span class="nav-label">AI Assistant</span>
+            <span class="badge">AI</span>
+          </button>
+
+          <div class="nav-section">DATA MANAGEMENT</div>
+          <button class="nav-item" data-view="upload">
+            <span class="nav-icon">⇪</span>
+            <span class="nav-label">Dataset Upload</span>
+          </button>
+          <button class="nav-item" data-view="history">
+            <span class="nav-icon">◷</span>
+            <span class="nav-label">Data History</span>
+          </button>
+
+          <div class="nav-section">CONFIGURATION</div>
+          <button class="nav-item" data-view="settings">
+            <span class="nav-icon">⚙</span>
+            <span class="nav-label">Settings</span>
+          </button>
+        </nav>
+      </div>
+
+      <button class="sidebar-collapse" id="collapseBtn">
+        <span>«</span>
+        <span class="nav-label">Collapse</span>
+      </button>
+    </aside>
+
+    <!-- MAIN CONTENT WORKSPACE -->
+    <div class="main-wrapper">
+      <div class="bg-logo-watermark"></div>
+      <!-- TOP NAVIGATION BAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="selector-dropdown">
+            <select id="dashboardSelector" aria-label="Dashboard Selection">
+              <option value="overview">Statistical Trap Overview</option>
+              <option value="analytics">Analytics Dashboard</option>
+              <option value="traps">Trap Detection Engine</option>
+              <option value="anomalies">Anomaly Detection Monitor</option>
+              <option value="upload">Dataset Upload &amp; Audit</option>
+            </select>
+            <span class="chevron">⌄</span>
+          </div>
+          <span class="demo-pill" id="datasetSourceBadge" title="Current backend data source">DEMO DATA</span>
+        </div>
+
+        <div class="topbar-center">
+          <div class="search-box">
+            <span class="search-icon">⌕</span>
+            <input type="text" id="globalSearchInput" placeholder="Ask SPYNEX AI or search statistical traps, metrics..." />
+            <kbd>⌘K</kbd>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="icon-btn ai-spark-btn" id="quickAskBtn" title="Open SPYNEX AI Assistant">✦</button>
+          <button class="icon-btn" id="notifBtn" title="Active Trap Alerts">
+            🔔<span class="notif-dot" id="notifDot"></span>
+          </button>
+          <button class="icon-btn" id="helpBtn" title="Statistical Trap Methodology">?</button>
+          <div class="user-profile">
+            <div class="avatar">DS</div>
+            <div class="user-meta">
+              <div class="user-name">Lead Analyst</div>
+              <div class="user-plan">SPYNEX AI Enterprise</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- SUB-HEADER FILTER STRIP -->
+      <div class="subbar">
+        <div class="dataset-caption" id="activeDatasetLabel">Active Dataset: Enterprise_Telemetry_Q4 (Demo)</div>
+        <div class="subbar-controls">
+          <label class="filter-pill">
+            <span>📅</span>
+            <select id="dateRangeFilter" aria-label="Date Range Filter">
+              <option value="30d" selected>Oct 13 – Nov 12, 2026</option>
+              <option value="7d">Last 7 Days (Nov 5 – Nov 12)</option>
+              <option value="90d">Last 90 Days (Q3–Q4 2026)</option>
+            </select>
+          </label>
+          <label class="filter-pill">
+            <span>⫶</span>
+            <select id="severityFilter" aria-label="Severity Filter">
+              <option value="all" selected>Filters: All Severities</option>
+              <option value="high">Severity: High Only</option>
+              <option value="medium">Severity: Medium Only</option>
+              <option value="low">Severity: Low Only</option>
+            </select>
+          </label>
+          <button class="filter-pill upload-quick-btn" id="quickUploadTrigger">⇪ Upload CSV/JSON</button>
+        </div>
+      </div>
+
+      <!-- PRIMARY OVERVIEW VIEW -->
+      <main class="dashboard-content" id="view-overview">
+        <!-- ROW 1: 5 KPI CARDS -->
+        <section class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-icon orange">▤</span>
+              <span class="kpi-title">Total Datasets Analyzed</span>
+            </div>
+            <div class="kpi-body">
+              <div>
+                <div class="kpi-value" id="kpiDatasets">148</div>
+                <div class="kpi-delta positive" id="kpiDatasetsDelta">↗ 18.6% vs prior period</div>
+              </div>
+              <canvas class="sparkline" id="spark1" width="76" height="32"></canvas>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-icon blue">◈</span>
+              <span class="kpi-title">Statistical Traps Detected</span>
+            </div>
+            <div class="kpi-body">
+              <div>
+                <div class="kpi-value" id="kpiTraps">4</div>
+                <div class="kpi-delta positive" id="kpiTrapsDelta">↗ 12.4% active audit</div>
+              </div>
+              <canvas class="sparkline" id="spark2" width="76" height="32"></canvas>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-icon purple">%</span>
+              <span class="kpi-title">Data Quality Score</span>
+            </div>
+            <div class="kpi-body">
+              <div>
+                <div class="kpi-value" id="kpiQuality">94.8%</div>
+                <div class="kpi-delta positive" id="kpiQualityDelta">↗ 4.2% completeness</div>
+              </div>
+              <canvas class="sparkline" id="spark3" width="76" height="32"></canvas>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-icon amber">⟁</span>
+              <span class="kpi-title">Anomalies Detected</span>
+            </div>
+            <div class="kpi-body">
+              <div>
+                <div class="kpi-value" id="kpiAnomalies">29</div>
+                <div class="kpi-delta positive" id="kpiAnomaliesDelta">↗ 6.1% Isolation Forest</div>
+              </div>
+              <canvas class="sparkline" id="spark4" width="76" height="32"></canvas>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-icon red">◎</span>
+              <span class="kpi-title">Analysis Accuracy</span>
+            </div>
+            <div class="kpi-body">
+              <div>
+                <div class="kpi-value" id="kpiAccuracy">96.2%</div>
+                <div class="kpi-delta positive" id="kpiAccuracyDelta">↗ 1.8% model confidence</div>
+              </div>
+              <canvas class="sparkline" id="spark5" width="76" height="32"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- ROW 2: MAIN LINE CHART (LEFT) + AI INSIGHT PANEL (RIGHT) -->
+        <section class="middle-grid">
+          <div class="glass-card main-chart-card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h2 id="mainChartTitle">Dataset Trends &amp; Anomaly Detection</h2>
+                <span class="info-dot" title="Actual telemetry vs expected statistical baseline with Isolation Forest anomaly highlight">ⓘ</span>
+              </div>
+              <div class="chart-controls">
+                <select id="chartGranularity" class="mini-select">
+                  <option value="daily">Daily</option>
+                  <option value="rolling">Smoothed</option>
+                </select>
+                <div class="mode-toggles">
+                  <button class="mode-btn active" data-mode="both" title="Show Actual & Expected">∿</button>
+                  <button class="mode-btn" data-mode="actual" title="Actual Only">📈</button>
+                  <button class="mode-btn" data-mode="anomalies" title="Highlight Anomalies">◈</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-legend-row">
+              <span class="legend-item"><i class="dot-orange"></i> Actual Metric</span>
+              <span class="legend-item"><i class="dot-dashed"></i> Expected Baseline</span>
+              <span class="legend-item"><i class="dot-glow"></i> Suspicious Anomaly Spike</span>
+            </div>
+
+            <div class="main-chart-stage">
+              <div class="canvas-holder">
+                <canvas id="mainTrendChart"></canvas>
+              </div>
+              <div class="anomaly-callout" id="anomalyCallout">
+                <div class="callout-head"><span class="orange-dot"></span> Anomaly Detected</div>
+                <div class="callout-date" id="calloutDate">Nov 08, 2026</div>
+                <div class="callout-desc" id="calloutDesc">Metric was 48% higher than expected, flagging structural distortion.</div>
+                <button class="btn-anomaly" id="viewAnomalyBtn">View Anomaly</button>
+                <div class="callout-conf-row">
+                  <span>AI Confidence</span>
+                  <strong id="calloutConf">94%</strong>
+                </div>
+                <div class="conf-bar"><div class="conf-fill" id="calloutConfBar" style="width:94%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT PANEL: AI INSIGHT -->
+          <div class="glass-card ai-insight-card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <span class="spark-orange">✦</span>
+                <h2>SPYNEX AI Insight</h2>
+              </div>
+              <span class="severity-pill high" id="insightSeverityBadge">High Impact</span>
+            </div>
+
+            <div class="insight-category-tag" id="insightCategory">Category: Simpson's Paradox</div>
+            <h3 class="insight-headline" id="insightTitle">Simpson's Paradox Reversal across 'Customer_Segment'</h3>
+            <p class="insight-body" id="insightExplanation">
+              Aggregate correlation reverses direction inside subgroup partitions, creating a critical false conclusion if evaluated unstratified.
+            </p>
+
+            <div class="factors-header">Top Contributing Factors</div>
+            <div class="factors-list" id="insightFactors">
+              <div class="factor-row">
+                <span class="factor-name">Aggregate Trend</span>
+                <span class="factor-val pos">r = -0.64</span>
+              </div>
+              <div class="factor-row">
+                <span class="factor-name">Subgroup Trend</span>
+                <span class="factor-val pos">r = +0.58</span>
+              </div>
+              <div class="factor-row">
+                <span class="factor-name">AI Confidence</span>
+                <span class="factor-val pos" id="insightConfidenceVal">94%</span>
+              </div>
+            </div>
+
+            <button class="btn-full-analysis" id="viewDetailedAnalysisBtn">View Detailed Analysis</button>
+          </div>
+        </section>
+
+        <!-- ROW 3: BOTTOM 3 PANELS -->
+        <section class="bottom-grid">
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3>Statistical Trap Distribution</h3>
+                <span class="info-dot">ⓘ</span>
+              </div>
+              <span class="mini-tag">By Trap Category</span>
+            </div>
+            <div class="bottom-chart-wrap">
+              <canvas id="trapBarChart"></canvas>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3>Dataset Analysis</h3>
+                <span class="info-dot">ⓘ</span>
+              </div>
+            </div>
+            <div class="donut-layout">
+              <div class="donut-canvas-box">
+                <canvas id="datasetDonutChart"></canvas>
+                <div class="donut-center">
+                  <span class="donut-sub">Total Records</span>
+                  <strong id="donutTotalRecords">360</strong>
+                </div>
+              </div>
+              <div class="donut-legend" id="donutLegend"></div>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3>Recent Anomalies</h3>
+                <span class="info-dot">ⓘ</span>
+              </div>
+              <button class="link-orange" id="viewAllAnomaliesBtn">View All</button>
+            </div>
+            <div class="table-wrap">
+              <table class="spy-table">
+                <thead>
+                  <tr>
+                    <th>Detected Issue</th>
+                    <th>Date</th>
+                    <th>Severity</th>
+                    <th>Explanation</th>
+                  </tr>
+                </thead>
+                <tbody id="recentAnomaliesBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <footer class="dashboard-footer">
+          <span>SPYNEX AI Statistical Engine • SciPy &amp; Isolation Forest Backend</span>
+          <span id="lastRefreshedText">Data Refreshed: Just now ↻</span>
+        </footer>
+      </main>
+
+      <!-- SECONDARY VIEWS -->
+      <section class="subview-panel hidden" id="view-upload">
+        <div class="glass-card subview-card">
+          <div class="card-header">
+            <h2>Dataset Upload &amp; Automated Trap Audit</h2>
+            <button class="btn-anomaly" id="resetDemoBtn">Restore Demo Dataset</button>
+          </div>
+          <p class="subview-desc">Upload a CSV or JSON file. SPYNEX AI's Python backend will execute real-time Simpson's Paradox checks, skewness/outlier analysis, multicollinearity VIF scans, and Isolation Forest anomaly detection.</p>
+          <form id="uploadForm" class="upload-dropzone">
+            <input type="file" id="datasetFileInput" accept=".csv,.json" required />
+            <div class="dropzone-inner">
+              <div class="drop-icon">⇪</div>
+              <div class="drop-title" id="selectedFileName">Select or drop a .CSV / .JSON dataset</div>
+              <div class="drop-hint">Max 16MB • Tabular numeric &amp; categorical columns supported</div>
+              <button type="submit" class="btn-full-analysis upload-submit-btn">Run SPYNEX AI Statistical Analysis</button>
+            </div>
+          </form>
+          <div id="uploadStatusBanner" class="status-banner hidden"></div>
+        </div>
+      </section>
+
+      <section class="subview-panel hidden" id="view-assistant">
+        <div class="glass-card subview-card">
+          <div class="card-header">
+            <h2>SPYNEX AI Statistical Assistant</h2>
+            <span class="severity-pill high">Backend Grounded</span>
+          </div>
+          <div class="chat-feed" id="chatFeed">
+            <div class="chat-msg ai">Ask SPYNEX AI any question about the active dataset's statistical traps, Simpson's paradox risk, anomalies, or data quality score.</div>
+          </div>
+          <form id="aiChatForm" class="chat-input-row">
+            <input type="text" id="aiQuestionInput" placeholder="e.g., Explain the detected statistical traps in this dataset..." required />
+            <button type="submit" class="btn-anomaly">Ask SPYNEX AI</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="subview-panel hidden" id="view-detailed-list">
+        <div class="glass-card subview-card">
+          <div class="card-header">
+            <h2 id="detailedViewTitle">Detailed Statistical Audit &amp; Schema</h2>
+            <button class="btn-anomaly" onclick="switchView('overview')">← Back to Overview</button>
+          </div>
+          <div id="detailedViewContainer"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- MODAL FOR DETAILED ANALYSIS -->
+  <div class="modal-backdrop hidden" id="detailModal">
+    <div class="glass-card modal-box">
+      <div class="card-header">
+        <h3 id="modalTitle">SPYNEX AI Detailed Statistical Trap Report</h3>
+        <button class="icon-btn" id="closeModalBtn">✕</button>
+      </div>
+      <div id="modalContent" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
